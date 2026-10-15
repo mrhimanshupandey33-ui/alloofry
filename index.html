@@ -117,7 +117,48 @@
         const card = document.createElement("article");
         card.className = "car-card";
 
-        const visual = document.createElement("div");
+        
+const visual = document.createElement("div");
+visual.className = "car-visual";
+
+const image = document.createElement("img");
+image.className = "car-photo";
+image.alt = car.name;
+image.loading = "lazy";
+image.hidden = true;
+visual.appendChild(image);
+
+const symbol = document.createElement("span");
+symbol.className = "car-symbol";
+symbol.textContent = "✳";
+visual.appendChild(symbol);
+
+const categoryTag = document.createElement("span");
+categoryTag.className = "category-tag";
+categoryTag.textContent = car.cat;
+visual.appendChild(categoryTag);
+
+fetch(
+  "https://en.wikipedia.org/api/rest_v1/page/summary/" +
+  encodeURIComponent(car.wiki)
+)
+  .then(response => {
+    if (!response.ok) throw new Error("Image unavailable");
+    return response.json();
+  })
+  .then(data => {
+    const photo = data.thumbnail?.source;
+    if (photo) {
+      image.src = photo;
+      image.hidden = false;
+      symbol.hidden = true;
+      visual.classList.add("has-photo");
+    }
+  })
+  .catch(() => {
+    // Keep the decorative graphic if no photo is available.
+  });
+
         visual.className = "car-visual";
         visual.innerHTML = `<span class="car-symbol">✳</span>`;
         const categoryTag = document.createElement("span");
